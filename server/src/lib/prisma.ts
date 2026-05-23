@@ -12,11 +12,11 @@ if (!connectionString) {
 const parsed = parse(connectionString);
 
 const pool = new Pool({
-  user: parsed.user,
-  password: parsed.password,
-  host: parsed.host,
-  port: parseInt(parsed.port) || 5432,
-  database: parsed.database,
+  user: parsed.user !== null ? parsed.user : undefined,
+  password: parsed.password !== null ? parsed.password : undefined,
+  host: parsed.host !== null ? parsed.host : undefined,
+  port: parseInt(parsed.port !== null && parsed.port !== undefined ? parsed.port : "5432") || 5432,
+  database: parsed.database !== null ? parsed.database : undefined,
   ssl: parsed.ssl === false ? false : { rejectUnauthorized: false },
 });
 

@@ -12,8 +12,6 @@ const PORT = process.env.PORT || 3001;
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://olive-prana-8gf9.here.now",
-  "https://polite-maple-v8kx.here.now",
   process.env.CLIENT_URL,
 ].filter(Boolean) as string[];
 
