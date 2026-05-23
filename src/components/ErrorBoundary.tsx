@@ -22,6 +22,10 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("[ErrorBoundary] Uncaught error:", error, errorInfo);
+  }
+
   handleReset = () => {
     this.setState({ hasError: false, error: null });
   };
@@ -36,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-muted text-sm mb-6">
               An unexpected error occurred. Please try again.
             </p>
-            {this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <p className="text-xs text-muted font-mono mb-6 p-3 bg-background rounded-lg text-left overflow-auto">
                 {this.state.error.message}
               </p>
