@@ -1,7 +1,9 @@
 import type { UserProfile } from "../types";
 
+const API_BASE = import.meta.env.VITE_API_URL || "";
+
 async function post<T>(path: string, body: object): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_BASE}/api${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -18,7 +20,7 @@ async function post<T>(path: string, body: object): Promise<T> {
 }
 
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_BASE}/api${path}`, {
     credentials: "include",
   });
 
