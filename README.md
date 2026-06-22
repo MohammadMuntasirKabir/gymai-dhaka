@@ -12,10 +12,14 @@ Free AI training plans for everyone. Gym memberships at 6 partner locations acro
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Vite
-- **Backend**: Express, Prisma, Neon PostgreSQL
-- **AI**: OpenRouter (owl-alpha model)
-- **Auth**: Neon Auth
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript 6, Tailwind CSS 4, Vite 8 |
+| Backend | Express, Prisma, Neon PostgreSQL |
+| AI | OpenRouter (owl-alpha model) |
+| Auth | Neon Auth |
+| Icons | Lucide React |
+| Routing | React Router v7 |
 
 ## Project Structure
 
