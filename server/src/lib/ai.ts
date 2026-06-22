@@ -108,13 +108,8 @@ export async function generateTrainingPlan(
         const planData = tryParseJSON(content) as AiPlanResponse;
         return formatPlanResponse(planData, normalizedProfile);
       } catch {
-        console.error(
-          `[AI] Attempt ${attempt}: Failed to parse JSON:`,
-          content.substring(0, 200),
-        );
         lastError = new Error("AI returned invalid JSON");
         if (attempt < 3) {
-          console.log(`[AI] Retrying... (attempt ${attempt + 1}/3)`);
           continue;
         }
         throw lastError;
@@ -122,7 +117,19 @@ export async function generateTrainingPlan(
     } catch (error) {
       lastError =
         error instanceof Error ? error : new Error("Unknown AI error");
-      console.error(`[AI] Attempt ${attempt} failed:`, lastError.message);
+
+      // Don't retry on auth/rate-limit errors
+      const msg = lastError.message.toLowerCase();
+      if (
+        msg.includes("401") ||
+        msg.includes("403") ||
+        msg.includes("unauthorized") ||
+        msg.includes("rate limit") ||
+        msg.includes("429")
+      ) {
+        break;
+      }
+
       if (attempt < 3 && lastError.message !== "AI returned invalid JSON") {
         continue;
       }

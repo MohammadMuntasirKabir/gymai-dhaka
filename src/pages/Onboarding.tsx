@@ -61,6 +61,32 @@ const defaultFormData = {
   preferredSplit: "upper_lower",
 };
 
+interface FormErrors {
+  daysPerWeek?: string;
+  sessionLength?: string;
+  injuries?: string;
+}
+
+function validateForm(data: typeof defaultFormData): FormErrors {
+  const errors: FormErrors = {};
+
+  const days = parseInt(data.daysPerWeek);
+  if (isNaN(days) || days < 1 || days > 7) {
+    errors.daysPerWeek = "Please select between 1 and 7 days per week.";
+  }
+
+  const session = parseInt(data.sessionLength);
+  if (isNaN(session) || session < 15 || session > 180) {
+    errors.sessionLength = "Session length must be between 15 and 180 minutes.";
+  }
+
+  if (data.injuries && data.injuries.length > 500) {
+    errors.injuries = "Please keep injury/limitation notes under 500 characters.";
+  }
+
+  return errors;
+}
+
 function profileToFormData(profile: UserProfile | null) {
   if (!profile) return defaultFormData;
   return {
@@ -79,14 +105,36 @@ export default function Onboarding() {
   const [formData, setFormData] = useState(() => profileToFormData(profile));
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   function updateForm(field: string, value: string) {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear field error when user starts typing
+    if (formErrors[field as keyof FormErrors]) {
+      setFormErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  }
+
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errors = validateForm(formData);
+    if (errors[field as keyof FormErrors]) {
+      setFormErrors((prev) => ({ ...prev, [field]: errors[field as keyof FormErrors] }));
+    }
   }
 
   async function handleQuestionnaire(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    // Validate all fields before submitting
+    const errors = validateForm(formData);
+    setFormErrors(errors);
+    setTouched({ daysPerWeek: true, sessionLength: true, injuries: true });
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
 
     const profileData: Omit<UserProfile, "userId" | "updatedAt"> = {
       goal: formData.goal as UserProfile["goal"],
@@ -171,6 +219,8 @@ export default function Onboarding() {
                   options={daysOptions}
                   value={formData.daysPerWeek}
                   onChange={(e) => updateForm("daysPerWeek", e.target.value)}
+                  onBlur={() => handleBlur("daysPerWeek")}
+                  error={touched.daysPerWeek ? formErrors.daysPerWeek : undefined}
                 />
                 <Select
                   id="sessionLength"
@@ -180,6 +230,8 @@ export default function Onboarding() {
                   onChange={(e) =>
                     updateForm("sessionLength", e.target.value)
                   }
+                  onBlur={() => handleBlur("sessionLength")}
+                  error={touched.sessionLength ? formErrors.sessionLength : undefined}
                 />
               </div>
               <Select
@@ -205,6 +257,8 @@ export default function Onboarding() {
                 rows={3}
                 value={formData.injuries}
                 onChange={(e) => updateForm("injuries", e.target.value)}
+                onBlur={() => handleBlur("injuries")}
+                error={touched.injuries ? formErrors.injuries : undefined}
               />
 
               <div className="flex gap-3 pt-2">

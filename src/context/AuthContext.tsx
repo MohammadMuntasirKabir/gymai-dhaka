@@ -23,11 +23,13 @@ interface AuthContextType {
   plan: TrainingPlan | null;
   isLoading: boolean;
   isPlanLoading: boolean;
+  authError: string | null;
   saveProfile: (
     profile: Omit<UserProfile, "userId" | "updatedAt">,
   ) => Promise<void>;
   generatePlan: () => Promise<void>;
   refreshData: () => Promise<void>;
+  clearAuthError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,6 +43,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [plan, setPlan] = useState<TrainingPlan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPlanLoading, setIsPlanLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const isRefreshingRef = useRef(false);
   const lastSessionCheckRef = useRef(0);
 
@@ -56,6 +59,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch {
         setNeonUser(null);
+        setAuthError("Failed to load your session. Please sign in again.");
       } finally {
         setIsLoading(false);
       }
@@ -129,8 +133,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setPlan(null);
         }
-      } catch (err) {
-        console.error("[AuthContext] fetchPlan error:", err instanceof Error ? err.message : err);
+      } catch {
         if (!cancelled) setPlan(null);
       } finally {
         isRefreshingRef.current = false;
@@ -219,6 +222,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const clearAuthError = useCallback(() => {
+    setAuthError(null);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -227,9 +234,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         plan,
         isLoading,
         isPlanLoading,
+        authError,
         saveProfile,
         generatePlan,
         refreshData,
+        clearAuthError,
       }}
     >
       {children}

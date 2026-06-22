@@ -91,9 +91,38 @@ function DayCard({ schedule }: { schedule: DaySchedule }) {
 
 interface PlanDisplayProps {
   weeklySchedule: DaySchedule[];
+  isLoading?: boolean;
 }
 
-export function PlanDisplay({ weeklySchedule }: PlanDisplayProps) {
+export function PlanDisplay({ weeklySchedule, isLoading }: PlanDisplayProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-6 mb-8">
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <div key={idx} className="rounded-2xl border border-border bg-card p-6 overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <div className="space-y-2">
+                <div className="animate-pulse rounded-lg bg-border h-5 w-24" />
+                <div className="animate-pulse rounded-lg bg-border h-4 w-32" />
+              </div>
+              <div className="animate-pulse rounded-lg bg-border h-4 w-20" />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="animate-pulse rounded-lg bg-border h-4 w-32" />
+                  <div className="animate-pulse rounded-lg bg-border h-4 w-20 ml-auto" />
+                  <div className="animate-pulse rounded-lg bg-border h-4 w-16" />
+                  <div className="animate-pulse rounded-lg bg-border h-8 w-8" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 mb-8">
       {weeklySchedule.map((schedule, idx) => (

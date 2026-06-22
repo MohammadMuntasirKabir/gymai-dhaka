@@ -38,10 +38,9 @@ app.use((_req, res) => {
 
 // Global error handler
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("[server] Unhandled error:", err.message);
   res.status(500).json({ error: "Internal server error" });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port: ${PORT}`);
+  // Server started
 });
