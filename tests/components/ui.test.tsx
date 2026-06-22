@@ -1,0 +1,200 @@
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/TextArea";
+import { Skeleton, CardSkeleton } from "@/components/ui/Skeleton";
+
+describe("Button", () => {
+  it("should render children", () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByText("Click me")).toBeInTheDocument();
+  });
+
+  it("should apply primary variant by default", () => {
+    render(<Button>Primary</Button>);
+    const button = screen.getByText("Primary");
+    expect(button.className).toContain("bg-[var(--color-accent)]");
+  });
+
+  it("should apply secondary variant", () => {
+    render(<Button variant="secondary">Secondary</Button>);
+    const button = screen.getByText("Secondary");
+    expect(button.className).toContain("bg-[var(--color-card)]");
+  });
+
+  it("should apply ghost variant", () => {
+    render(<Button variant="ghost">Ghost</Button>);
+    const button = screen.getByText("Ghost");
+    expect(button.className).toContain("text-[var(--color-muted)]");
+  });
+
+  it("should apply size classes", () => {
+    const { rerender } = render(<Button size="sm">Small</Button>);
+    expect(screen.getByText("Small").className).toContain("px-3");
+
+    rerender(<Button size="md">Medium</Button>);
+    expect(screen.getByText("Medium").className).toContain("px-5");
+
+    rerender(<Button size="lg">Large</Button>);
+    expect(screen.getByText("Large").className).toContain("px-8");
+  });
+
+  it("should be disabled when disabled prop is set", () => {
+    render(<Button disabled>Disabled</Button>);
+    expect(screen.getByText("Disabled")).toBeDisabled();
+  });
+
+  it("should forward additional props", () => {
+    render(<Button type="submit">Submit</Button>);
+    expect(screen.getByText("Submit")).toHaveAttribute("type", "submit");
+  });
+
+  it("should merge custom className", () => {
+    render(<Button className="custom-class">Custom</Button>);
+    expect(screen.getByText("Custom").className).toContain("custom-class");
+  });
+});
+
+describe("Card", () => {
+  it("should render children", () => {
+    render(<Card>Card content</Card>);
+    expect(screen.getByText("Card content")).toBeInTheDocument();
+  });
+
+  it("should apply default variant", () => {
+    render(<Card>Default</Card>);
+    expect(screen.getByText("Default").className).toContain(
+      "bg-[var(--color-card)]",
+    );
+  });
+
+  it("should apply bordered variant", () => {
+    render(<Card variant="bordered">Bordered</Card>);
+    const card = screen.getByText("Bordered");
+    expect(card.className).toContain("border");
+  });
+
+  it("should merge custom className", () => {
+    render(<Card className="custom">Custom</Card>);
+    expect(screen.getByText("Custom").className).toContain("custom");
+  });
+});
+
+describe("Input", () => {
+  it("should render an input element", () => {
+    render(<Input id="test-input" />);
+    expect(screen.getByRole("textbox")).toBeInTheDocument();
+  });
+
+  it("should render a label when provided", () => {
+    render(<Input id="test-input" label="Test Label" />);
+    expect(screen.getByLabelText("Test Label")).toBeInTheDocument();
+  });
+
+  it("should display error message", () => {
+    render(<Input id="test-input" error="This field is required" />);
+    expect(screen.getByText("This field is required")).toBeInTheDocument();
+  });
+
+  it("should forward input props", () => {
+    render(<Input id="test-input" placeholder="Enter text" />);
+    expect(screen.getByRole("textbox")).toHaveAttribute(
+      "placeholder",
+      "Enter text",
+    );
+  });
+
+  it("should merge custom className", () => {
+    render(<Input id="test-input" className="custom-input" />);
+    expect(screen.getByRole("textbox").className).toContain("custom-input");
+  });
+});
+
+describe("Select", () => {
+  const options = [
+    { value: "a", label: "Option A" },
+    { value: "b", label: "Option B" },
+  ];
+
+  it("should render a select element with options", () => {
+    render(<Select id="test-select" options={options} />);
+    const select = screen.getByRole("combobox");
+    expect(select).toBeInTheDocument();
+    expect(screen.getByText("Option A")).toBeInTheDocument();
+    expect(screen.getByText("Option B")).toBeInTheDocument();
+  });
+
+  it("should render a label when provided", () => {
+    render(<Select id="test-select" label="Choose" options={options} />);
+    expect(screen.getByLabelText("Choose")).toBeInTheDocument();
+  });
+
+  it("should display error message", () => {
+    render(
+      <Select id="test-select" options={options} error="Required field" />,
+    );
+    expect(screen.getByText("Required field")).toBeInTheDocument();
+  });
+
+  it("should call onChange handler", async () => {
+    const { userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <Select id="test-select" options={options} onChange={onChange} />,
+    );
+    await user.selectOptions(screen.getByRole("combobox"), "b");
+    expect(onChange).toHaveBeenCalled();
+  });
+});
+
+describe("Textarea", () => {
+  it("should render a textarea element", () => {
+    render(<Textarea id="test-textarea" />);
+    expect(screen.getByRole("textbox")).toBeInTheDocument();
+  });
+
+  it("should render a label when provided", () => {
+    render(<Textarea id="test-textarea" label="Description" />);
+    expect(screen.getByLabelText("Description")).toBeInTheDocument();
+  });
+
+  it("should display error message", () => {
+    render(
+      <Textarea id="test-textarea" error="This field is required" />,
+    );
+    expect(screen.getByText("This field is required")).toBeInTheDocument();
+  });
+
+  it("should set rows attribute", () => {
+    render(<Textarea id="test-textarea" rows={5} />);
+    expect(screen.getByRole("textbox")).toHaveAttribute("rows", "5");
+  });
+});
+
+describe("Skeleton", () => {
+  it("should render with default classes", () => {
+    const { container } = render(<Skeleton />);
+    const skeleton = container.firstChild as HTMLElement;
+    expect(skeleton.className).toContain("animate-pulse");
+    expect(skeleton.className).toContain("rounded-lg");
+  });
+
+  it("should merge custom className", () => {
+    const { container } = render(<Skeleton className="h-8 w-48" />);
+    const skeleton = container.firstChild as HTMLElement;
+    expect(skeleton.className).toContain("h-8");
+    expect(skeleton.className).toContain("w-48");
+  });
+});
+
+describe("CardSkeleton", () => {
+  it("should render skeleton elements", () => {
+    const { container } = render(<CardSkeleton />);
+    const skeletons = container.querySelectorAll(".animate-pulse");
+    expect(skeletons.length).toBeGreaterThan(0);
+  });
+});
