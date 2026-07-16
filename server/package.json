@@ -22,7 +22,7 @@
     "express": "^5.2.1",
     "openai": "^6.47.0",
     "pg": "^8.22.0",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
