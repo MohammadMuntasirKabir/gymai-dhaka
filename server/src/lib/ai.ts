@@ -79,7 +79,7 @@ export async function generateTrainingPlan(
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const completion = await openai.chat.completions.create({
-        model: "openrouter/owl-alpha",
+        model: "openai/gpt-oss-20b:free",
         messages: [
           {
             role: "system",

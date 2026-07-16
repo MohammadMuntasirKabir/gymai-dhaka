@@ -1,13 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock Prisma before importing routes
-const mockUpsert = vi.fn();
-const mockFindUnique = vi.fn();
-const mockFindFirst = vi.fn();
-const mockCreate = vi.fn();
-const mockCount = vi.fn();
+const { mockUpsert, mockFindUnique, mockFindFirst, mockCreate, mockCount } =
+  vi.hoisted(() => ({
+    mockUpsert: vi.fn(),
+    mockFindUnique: vi.fn(),
+    mockFindFirst: vi.fn(),
+    mockCreate: vi.fn(),
+    mockCount: vi.fn(),
+  }));
 
-vi.mock("../server/src/lib/prisma", () => ({
+vi.mock("../../server/src/lib/prisma", () => ({
   prisma: {
     user_profiles: {
       upsert: mockUpsert,
@@ -22,7 +25,7 @@ vi.mock("../server/src/lib/prisma", () => ({
 }));
 
 // Mock the AI module
-vi.mock("../server/src/lib/ai", () => ({
+vi.mock("../../server/src/lib/ai", () => ({
   generateTrainingPlan: vi.fn().mockResolvedValue({
     overview: {
       goal: "Build muscle",
@@ -52,6 +55,18 @@ vi.mock("../server/src/lib/ai", () => ({
 import { profileRouter } from "../../server/src/routes/profile";
 import { planRouter } from "../../server/src/routes/plan";
 import type { Request, Response, NextFunction } from "express";
+
+// Resolve the actual route handler from an Express 5 Router stack layer.
+function getHandler(
+  router: { stack: Array<{ route?: { stack: Array<{ handle: Function }> } }> },
+  layerIndex: number,
+): Function {
+  const layer = router.stack[layerIndex];
+  if (!layer?.route) {
+    throw new Error(`Layer ${layerIndex} is not a route`);
+  }
+  return layer.route.stack[0].handle;
+}
 
 function createMockResponse() {
   const res = {
@@ -91,7 +106,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
 
       // The route uses async handler, so we need to wait for the promise
       await new Promise((r) => setTimeout(r, 10));
@@ -125,7 +140,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -148,7 +163,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -171,7 +186,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -194,7 +209,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -217,7 +232,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -237,7 +252,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -260,7 +275,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -283,7 +298,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -307,7 +322,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(mockUpsert).toHaveBeenCalledWith(
@@ -339,7 +354,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[1].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 1)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(mockFindUnique).toHaveBeenCalledWith({
@@ -358,7 +373,7 @@ describe("profileRouter", () => {
       const req = createMockRequest({ query: {} });
       const res = createMockResponse();
 
-      await profileRouter.stack[1].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 1)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -375,7 +390,7 @@ describe("profileRouter", () => {
       });
       const res = createMockResponse();
 
-      await profileRouter.stack[1].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(profileRouter, 1)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(404);

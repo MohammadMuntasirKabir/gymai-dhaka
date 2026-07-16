@@ -1,10 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock Prisma
-const mockFindUnique = vi.fn();
-const mockFindFirst = vi.fn();
-const mockCreate = vi.fn();
-const mockCount = vi.fn();
+const { mockFindUnique, mockFindFirst, mockCreate, mockCount } = vi.hoisted(
+  () => ({
+    mockFindUnique: vi.fn(),
+    mockFindFirst: vi.fn(),
+    mockCreate: vi.fn(),
+    mockCount: vi.fn(),
+  }),
+);
 
 vi.mock("../../server/src/lib/prisma", () => ({
   prisma: {
@@ -49,6 +53,18 @@ vi.mock("../../server/src/lib/ai", () => ({
 
 import { planRouter } from "../../server/src/routes/plan";
 import type { Request, Response, NextFunction } from "express";
+
+// Resolve the actual route handler from an Express 5 Router stack layer.
+function getHandler(
+  router: { stack: Array<{ route?: { stack: Array<{ handle: Function }> } }> },
+  layerIndex: number,
+): Function {
+  const layer = router.stack[layerIndex];
+  if (!layer?.route) {
+    throw new Error(`Layer ${layerIndex} is not a route`);
+  }
+  return layer.route.stack[0].handle;
+}
 
 function createMockResponse() {
   const res = {
@@ -99,7 +115,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 50));
 
       expect(mockFindUnique).toHaveBeenCalledWith({
@@ -118,7 +134,7 @@ describe("planRouter", () => {
       const req = createMockRequest({ body: {} });
       const res = createMockResponse();
 
-      await planRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -131,7 +147,7 @@ describe("planRouter", () => {
       const req = createMockRequest({ body: { userId: 123 } });
       const res = createMockResponse();
 
-      await planRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -145,7 +161,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -179,7 +195,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 50));
 
       expect(mockCreate).toHaveBeenCalledWith(
@@ -213,7 +229,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[0].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 0)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 50));
 
       expect(res.status).toHaveBeenCalledWith(500);
@@ -246,7 +262,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[1].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 1)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(mockFindFirst).toHaveBeenCalledWith({
@@ -266,7 +282,7 @@ describe("planRouter", () => {
       const req = createMockRequest({ query: {} });
       const res = createMockResponse();
 
-      await planRouter.stack[1].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 1)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);
@@ -280,7 +296,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[1].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 1)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(404);
@@ -299,7 +315,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[2].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(mockCount).toHaveBeenCalledWith({
@@ -316,7 +332,7 @@ describe("planRouter", () => {
       });
       const res = createMockResponse();
 
-      await planRouter.stack[2].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.json).toHaveBeenCalledWith({ exists: false });
@@ -326,7 +342,7 @@ describe("planRouter", () => {
       const req = createMockRequest({ query: {} });
       const res = createMockResponse();
 
-      await planRouter.stack[2].handle(req, res, (() => {}) as NextFunction);
+      await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(res.status).toHaveBeenCalledWith(400);

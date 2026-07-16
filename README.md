@@ -21,7 +21,7 @@ A gym partnership platform in Bangladesh with free AI-generated personal trainin
 |---|---|
 | Frontend | React 19, TypeScript 6, Tailwind CSS 4, Vite 8 |
 | Backend | Express, Prisma, Neon PostgreSQL |
-| AI | OpenRouter (owl-alpha model) with retry logic |
+| AI | OpenRouter (openai/gpt-oss-20b:free) with retry logic |
 | Auth | Neon Auth |
 | Icons | Lucide React |
 | Routing | React Router v7 |
