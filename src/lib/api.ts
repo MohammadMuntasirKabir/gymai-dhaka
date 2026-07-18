@@ -75,6 +75,41 @@ export const api = {
     return get<UserProfile>(`/profile?userId=${userId}`);
   },
 
+  getPlanHistory: (userId: string) => {
+    return get<{ plans: Array<{ id: string; version: number; createdAt: string }> }>(
+      `/plan/history?userId=${userId}`,
+    );
+  },
+
+  getPlanById: (
+    userId: string,
+    id: string,
+  ) => {
+    return get<{
+      id: string;
+      userId: string;
+      planJson: {
+        overview: { goal: string; frequency: string; split: string; notes: string };
+        weeklySchedule: Array<{
+          day: string;
+          focus: string;
+          exercises: Array<{
+            name: string;
+            sets: number;
+            reps: string;
+            rest: string;
+            rpe: number;
+            notes?: string;
+            alternatives?: string[];
+          }>;
+        }>;
+        progression: string;
+      };
+      version: number;
+      createdAt: string;
+    }>(`/plan/${id}?userId=${userId}`);
+  },
+
   hasAnyPlans: () => {
     return get<{ exists: boolean }>("/plan/exists");
   },

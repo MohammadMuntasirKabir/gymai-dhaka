@@ -10,7 +10,8 @@ function ExerciseRow({
   index: number;
 }) {
   return (
-    <tr className="border-b border-border last:border-0">
+    <>
+      <tr className="border-b border-border last:border-0">
       <td className="py-3 pr-4">
         <div className="flex items-start gap-3">
           <span className="text-xs text-muted w-5">{index + 1}.</span>
@@ -35,7 +36,7 @@ function ExerciseRow({
       <td className="py-3 px-4 text-center">
         <span className="text-muted">{exercise.rest}</span>
       </td>
-      <td className="py-3 px-4 text-center">
+      <td className={`py-3 px-4 text-center`}>
         <span
           className={`inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium
             ${
@@ -49,7 +50,19 @@ function ExerciseRow({
           {exercise.rpe}
         </span>
       </td>
-    </tr>
+      </tr>
+      {exercise.alternatives && exercise.alternatives.length > 0 && (
+      <tr className="border-b border-border last:border-0">
+        <td colSpan={4} className="py-2 pr-4">
+          <p className="text-xs text-muted flex items-center gap-1.5">
+            <Info className="w-3 h-3 flex-shrink-0" />
+            <span className="font-medium text-muted/80">Alternatives:</span>
+            {exercise.alternatives.join(" · ")}
+          </p>
+        </td>
+      </tr>
+      )}
+    </>
   );
 }
 
