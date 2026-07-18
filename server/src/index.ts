@@ -7,6 +7,8 @@ import { profileRouter } from "./routes/profile";
 import { planRouter } from "./routes/plan";
 
 const app = express();
+// Don't advertise the framework in response headers.
+app.disable("x-powered-by");
 const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = [
@@ -20,7 +22,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 
 // API Routes
 app.use("/api/profile", profileRouter);
@@ -38,6 +40,7 @@ app.use((_req, res) => {
 
 // Global error handler
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[server] Unhandled error:", err.message);
   res.status(500).json({ error: "Internal server error" });
 });
 

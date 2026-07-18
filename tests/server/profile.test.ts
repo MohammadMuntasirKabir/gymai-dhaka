@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Request, Response, NextFunction } from "express";
+import { profileRouter } from "../../server/src/routes/profile";
 
 // Mock Prisma before importing routes
 const { mockUpsert, mockFindUnique, mockFindFirst, mockCreate, mockCount } =
@@ -52,15 +54,21 @@ vi.mock("../../server/src/lib/ai", () => ({
   }),
 }));
 
-import { profileRouter } from "../../server/src/routes/profile";
-import { planRouter } from "../../server/src/routes/plan";
-import type { Request, Response, NextFunction } from "express";
+type RouteHandlerFn = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => void;
+
+type RouterLayer = {
+  route?: { stack: Array<{ handle: RouteHandlerFn }> };
+};
 
 // Resolve the actual route handler from an Express 5 Router stack layer.
 function getHandler(
-  router: { stack: Array<{ route?: { stack: Array<{ handle: Function }> } }> },
+  router: { stack: RouterLayer[] },
   layerIndex: number,
-): Function {
+): RouteHandlerFn {
   const layer = router.stack[layerIndex];
   if (!layer?.route) {
     throw new Error(`Layer ${layerIndex} is not a route`);
@@ -107,7 +115,6 @@ describe("profileRouter", () => {
       const res = createMockResponse();
 
       await getHandler(profileRouter, 0)(req, res, (() => {}) as NextFunction);
-
       // The route uses async handler, so we need to wait for the promise
       await new Promise((r) => setTimeout(r, 10));
 

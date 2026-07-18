@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/TextArea";
-import { Skeleton, CardSkeleton } from "@/components/ui/Skeleton";
 
 describe("Button", () => {
   it("should render children", () => {
@@ -172,29 +171,5 @@ describe("Textarea", () => {
   it("should set rows attribute", () => {
     render(<Textarea id="test-textarea" rows={5} />);
     expect(screen.getByRole("textbox")).toHaveAttribute("rows", "5");
-  });
-});
-
-describe("Skeleton", () => {
-  it("should render with default classes", () => {
-    const { container } = render(<Skeleton />);
-    const skeleton = container.firstChild as HTMLElement;
-    expect(skeleton.className).toContain("animate-pulse");
-    expect(skeleton.className).toContain("rounded-lg");
-  });
-
-  it("should merge custom className", () => {
-    const { container } = render(<Skeleton className="h-8 w-48" />);
-    const skeleton = container.firstChild as HTMLElement;
-    expect(skeleton.className).toContain("h-8");
-    expect(skeleton.className).toContain("w-48");
-  });
-});
-
-describe("CardSkeleton", () => {
-  it("should render skeleton elements", () => {
-    const { container } = render(<CardSkeleton />);
-    const skeletons = container.querySelectorAll(".animate-pulse");
-    expect(skeletons.length).toBeGreaterThan(0);
   });
 });

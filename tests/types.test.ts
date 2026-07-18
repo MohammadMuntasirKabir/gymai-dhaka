@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import type {
   User,
   UserProfile,
-  PlanOverview,
   Exercise,
   DaySchedule,
   TrainingPlan,

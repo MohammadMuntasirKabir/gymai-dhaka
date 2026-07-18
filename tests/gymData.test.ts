@@ -6,7 +6,6 @@ import {
   offlinePaymentNote,
   freeAITag,
 } from "../src/data/gymData";
-import type { GymPartner, PricingTier } from "../src/types";
 
 describe("gymData", () => {
   describe("partnerGyms", () => {

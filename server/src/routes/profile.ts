@@ -22,13 +22,14 @@ interface ProfileRequestBody {
 function validateProfile(body: ProfileRequestBody): string | null {
   const { userId, goal, experience, daysPerWeek, sessionLength, equipment, preferredSplit } = body;
 
-  if (!userId || typeof userId !== "string") return "User ID is required";
+  if (typeof userId !== "string" || userId.length === 0 || userId.length > 100) return "User ID is required";
   if (!goal || !VALID_GOALS.includes(goal)) return `Invalid goal. Must be one of: ${VALID_GOALS.join(", ")}`;
   if (!experience || !VALID_EXPERIENCE.includes(experience)) return `Invalid experience. Must be one of: ${VALID_EXPERIENCE.join(", ")}`;
   if (typeof daysPerWeek !== "number" || daysPerWeek < 1 || daysPerWeek > 7) return "daysPerWeek must be between 1 and 7";
   if (typeof sessionLength !== "number" || sessionLength < 15 || sessionLength > 180) return "sessionLength must be between 15 and 180";
   if (!equipment || !VALID_EQUIPMENT.includes(equipment)) return `Invalid equipment. Must be one of: ${VALID_EQUIPMENT.join(", ")}`;
   if (!preferredSplit || !VALID_SPLITS.includes(preferredSplit)) return `Invalid split. Must be one of: ${VALID_SPLITS.join(", ")}`;
+  if (body.injuries && body.injuries.length > 1000) return "Injuries note must be 1000 characters or fewer";
 
   return null;
 }

@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   Users,
   CreditCard,
-  Dumbbell,
   Gift,
   Banknote,
   Smartphone,
@@ -500,7 +499,7 @@ export default function Home() {
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Dumbbell className="w-5 h-5 text-accent" />
+            <Sparkles className="w-5 h-5 text-accent" />
             <span className="font-semibold">GymAI Dhaka</span>
           </div>
           <p className="text-muted text-sm">

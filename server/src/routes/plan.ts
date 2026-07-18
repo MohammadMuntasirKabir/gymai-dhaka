@@ -8,7 +8,7 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
 
-    if (!userId || typeof userId !== "string") {
+    if (typeof userId !== "string" || userId.length === 0 || userId.length > 100) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -53,15 +53,14 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
     console.error("[plan] Error generating plan:", message);
     res.status(500).json({
       error: "Failed to generate training plan. Please try again.",
-      details: message,
     });
   }
 });
 
 planRouter.get("/current", async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
-    if (!userId) {
+    const userId = req.query.userId;
+    if (typeof userId !== "string" || userId.length === 0) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
@@ -90,8 +89,8 @@ planRouter.get("/current", async (req: Request, res: Response) => {
 
 planRouter.get("/exists", async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
-    if (!userId) {
+    const userId = req.query.userId;
+    if (typeof userId !== "string" || userId.length === 0) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
