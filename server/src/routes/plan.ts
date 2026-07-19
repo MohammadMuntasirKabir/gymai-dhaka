@@ -51,6 +51,13 @@ planRouter.post("/generate", async (req: Request, res: Response) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("[plan] Error generating plan:", message);
+    // Surface OpenRouter rate-limit / quota errors clearly to the user.
+    if (/429|rate limit|free-models-per-day/i.test(message)) {
+      return res.status(429).json({
+        error:
+          "The free AI model's daily limit is reached. Please try again after the limit resets, or add credits to your OpenRouter account.",
+      });
+    }
     res.status(500).json({
       error: "Failed to generate training plan. Please try again.",
     });
