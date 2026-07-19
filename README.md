@@ -134,8 +134,19 @@ npm run dev:server
 
 ## Deployment
 
-- **Frontend**: Deployed on Vercel (`framework: vite`, output `dist/`). Set `VITE_NEON_AUTH_URL` and `VITE_API_URL` env vars.
-- **Backend**: Deployed on Render (`render.yaml`) as a web service + static frontend. Set `DATABASE_URL`, `OPEN_ROUTER_KEY`, `BASE_URL`, `CLIENT_URL`, `PORT`.
+The entire app (frontend **and** backend API) is deployed as a single Vercel project. The Express API runs as a Vercel serverless function at `api/[[...path]].ts` (same origin, no separate backend host), so `VITE_API_URL` is left empty and the frontend calls `/api/...` directly.
+
+### Required Vercel environment variables
+
+| Variable | Scope | Value |
+|---|---|---|
+| `VITE_NEON_AUTH_URL` | build | Your Neon Auth endpoint (e.g. `https://<id>.neonauth...aws.neon.tech/neondb/auth`) |
+| `VITE_API_URL` | build | _(empty)_ — API is served from the same Vercel domain |
+| `DATABASE_URL` | runtime (serverless) | Neon PostgreSQL connection string |
+| `OPEN_ROUTER_KEY` | runtime (serverless) | OpenRouter API key (plan generation uses `google/gemma-4-31b-it:free`) |
+| `NODE_ENV` | runtime | `production` |
+
+`prisma generate` runs automatically during `npm run build`. After deploying, run `npx prisma migrate deploy --schema server/prisma/schema.prisma` (or `prisma db push`) against `DATABASE_URL` to create the `user_profiles` / `training_plans` tables.
 
 See `DEPLOY.md` for the original repository + environment setup notes.
 
