@@ -25,7 +25,6 @@ import type { TrainingPlan } from "../types";
 import { api } from "../lib/api";
 import { useWorkoutLog } from "../lib/workoutLog";
 import {
-  planToMarkdown,
   copyPlanAsMarkdown,
   printPlan,
 } from "../lib/planExport";
@@ -458,10 +457,7 @@ export default function Profile() {
           <div className="text-center">
             <button
               type="button"
-              onClick={() => {
-                void planToMarkdown(plan);
-                handleCopy();
-              }}
+              onClick={handleCopy}
               className="text-xs text-muted underline hover:text-foreground transition-colors"
             >
               Copy plan as text

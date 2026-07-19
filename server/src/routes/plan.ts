@@ -87,23 +87,6 @@ planRouter.get("/current", async (req: Request, res: Response) => {
   }
 });
 
-planRouter.get("/exists", async (req: Request, res: Response) => {
-  try {
-    const userId = req.query.userId;
-    if (typeof userId !== "string" || userId.length === 0) {
-      return res.status(400).json({ error: "User ID is required" });
-    }
-
-    const count = await prisma.training_plans.count({
-      where: { user_id: userId },
-    });
-    res.json({ exists: count > 0 });
-  } catch (error) {
-    console.error("[plan] Error checking plans:", error instanceof Error ? error.message : error);
-    res.status(500).json({ error: "Failed to check plans" });
-  }
-});
-
 planRouter.get("/history", async (req: Request, res: Response) => {
   try {
     const userId = req.query.userId;

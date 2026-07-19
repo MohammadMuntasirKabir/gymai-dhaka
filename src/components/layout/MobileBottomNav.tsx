@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, MapPin, Dumbbell, User } from "lucide-react";
+import { Home, MapPin, Dumbbell, User, Download } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
+import { usePwaInstall } from "../../lib/usePwaInstall";
 
 export default function MobileBottomNav() {
   const { pathname } = useLocation();
   const { user } = useAuth();
+  const install = usePwaInstall();
 
   // Don't show on auth pages
   if (pathname.startsWith("/auth") || pathname.startsWith("/account")) return null;
@@ -34,6 +36,17 @@ export default function MobileBottomNav() {
             </Link>
           );
         })}
+        {install && (
+          <button
+            type="button"
+            onClick={install}
+            aria-label="Install app"
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-muted transition-colors"
+          >
+            <Download className="w-5 h-5" />
+            <span className="text-xs">Install</span>
+          </button>
+        )}
       </div>
     </nav>
   );

@@ -3,13 +3,12 @@ import type { Request, Response, NextFunction } from "express";
 import { planRouter } from "../../server/src/routes/plan";
 
 // Mock Prisma
-const { mockFindUnique, mockFindFirst, mockFindMany, mockCreate, mockCount } =
+const { mockFindUnique, mockFindFirst, mockFindMany, mockCreate } =
   vi.hoisted(() => ({
     mockFindUnique: vi.fn(),
     mockFindFirst: vi.fn(),
     mockFindMany: vi.fn(),
     mockCreate: vi.fn(),
-    mockCount: vi.fn(),
   }));
 
 vi.mock("../../server/src/lib/prisma", () => ({
@@ -21,7 +20,6 @@ vi.mock("../../server/src/lib/prisma", () => ({
       findFirst: mockFindFirst,
       findMany: mockFindMany,
       create: mockCreate,
-      count: mockCount,
     },
   },
 }));
@@ -80,7 +78,7 @@ describe("planRouter GET /history", () => {
 
     const req = createMockRequest({ query: { userId: "user-123" } });
     const res = createMockResponse();
-    await getHandler(planRouter, 3)(req, res, (() => {}) as NextFunction);
+    await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
     await new Promise((r) => setTimeout(r, 10));
 
     expect(mockFindMany).toHaveBeenCalledWith({
@@ -99,7 +97,7 @@ describe("planRouter GET /history", () => {
   it("should return 400 for missing userId", async () => {
     const req = createMockRequest({ query: {} });
     const res = createMockResponse();
-    await getHandler(planRouter, 3)(req, res, (() => {}) as NextFunction);
+    await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
     await new Promise((r) => setTimeout(r, 10));
     expect(res.status).toHaveBeenCalledWith(400);
   });
@@ -125,7 +123,7 @@ describe("planRouter GET /:id", () => {
       query: { userId: "user-123" },
     });
     const res = createMockResponse();
-    await getHandler(planRouter, 4)(req, res, (() => {}) as NextFunction);
+    await getHandler(planRouter, 3)(req, res, (() => {}) as NextFunction);
     await new Promise((r) => setTimeout(r, 10));
 
     expect(mockFindFirst).toHaveBeenCalledWith({
@@ -139,7 +137,7 @@ describe("planRouter GET /:id", () => {
   it("should return 400 when userId missing", async () => {
     const req = createMockRequest({ params: { id: "p-2" }, query: {} });
     const res = createMockResponse();
-    await getHandler(planRouter, 4)(req, res, (() => {}) as NextFunction);
+    await getHandler(planRouter, 3)(req, res, (() => {}) as NextFunction);
     await new Promise((r) => setTimeout(r, 10));
     expect(res.status).toHaveBeenCalledWith(400);
   });
@@ -151,7 +149,7 @@ describe("planRouter GET /:id", () => {
       query: { userId: "user-123" },
     });
     const res = createMockResponse();
-    await getHandler(planRouter, 4)(req, res, (() => {}) as NextFunction);
+    await getHandler(planRouter, 3)(req, res, (() => {}) as NextFunction);
     await new Promise((r) => setTimeout(r, 10));
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(

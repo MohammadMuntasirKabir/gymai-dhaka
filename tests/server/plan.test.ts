@@ -3,14 +3,11 @@ import type { Request, Response, NextFunction } from "express";
 import { planRouter } from "../../server/src/routes/plan";
 
 // Mock Prisma
-const { mockFindUnique, mockFindFirst, mockCreate, mockCount } = vi.hoisted(
-  () => ({
-    mockFindUnique: vi.fn(),
-    mockFindFirst: vi.fn(),
-    mockCreate: vi.fn(),
-    mockCount: vi.fn(),
-  }),
-);
+const { mockFindUnique, mockFindFirst, mockCreate } = vi.hoisted(() => ({
+  mockFindUnique: vi.fn(),
+  mockFindFirst: vi.fn(),
+  mockCreate: vi.fn(),
+}));
 
 vi.mock("../../server/src/lib/prisma", () => ({
   prisma: {
@@ -20,11 +17,9 @@ vi.mock("../../server/src/lib/prisma", () => ({
     training_plans: {
       findFirst: mockFindFirst,
       create: mockCreate,
-      count: mockCount,
     },
   },
 }));
-
 // Mock the AI module
 vi.mock("../../server/src/lib/ai", () => ({
   generateTrainingPlan: vi.fn().mockResolvedValue({
@@ -312,49 +307,6 @@ describe("planRouter", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({ error: expect.stringContaining("No plan") }),
       );
-    });
-  });
-
-  describe("GET /exists", () => {
-    it("should return exists: true when plans exist", async () => {
-      mockCount.mockResolvedValueOnce(2);
-
-      const req = createMockRequest({
-        query: { userId: "user-123" },
-      });
-      const res = createMockResponse();
-
-      await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
-      await new Promise((r) => setTimeout(r, 10));
-
-      expect(mockCount).toHaveBeenCalledWith({
-        where: { user_id: "user-123" },
-      });
-      expect(res.json).toHaveBeenCalledWith({ exists: true });
-    });
-
-    it("should return exists: false when no plans exist", async () => {
-      mockCount.mockResolvedValueOnce(0);
-
-      const req = createMockRequest({
-        query: { userId: "user-123" },
-      });
-      const res = createMockResponse();
-
-      await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
-      await new Promise((r) => setTimeout(r, 10));
-
-      expect(res.json).toHaveBeenCalledWith({ exists: false });
-    });
-
-    it("should return 400 for missing userId", async () => {
-      const req = createMockRequest({ query: {} });
-      const res = createMockResponse();
-
-      await getHandler(planRouter, 2)(req, res, (() => {}) as NextFunction);
-      await new Promise((r) => setTimeout(r, 10));
-
-      expect(res.status).toHaveBeenCalledWith(400);
     });
   });
 });

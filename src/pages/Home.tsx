@@ -19,6 +19,11 @@ import {
 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { Reveal } from "../components/ui/Reveal";
+import FitnessCalculator from "../components/sections/FitnessCalculator";
+import Testimonials from "../components/sections/Testimonials";
+import Faq from "../components/sections/Faq";
+import StatsBand from "../components/sections/StatsBand";
 import {
   pricingTiers,
   partnerGyms,
@@ -106,22 +111,29 @@ export default function Home() {
             </span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth/sign-up">
-              <Button size="lg" className="gap-2">
-                <Gift className="w-5 h-5" />
-                Get Your Free AI Plan
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Link to="/gyms">
-              <Button variant="secondary" size="lg" className="gap-2">
-                <MapPin className="w-5 h-5" />
-                Explore Gyms
-              </Button>
-            </Link>
+            <Reveal>
+              <Link to="/auth/sign-up">
+                <Button size="lg" className="gap-2">
+                  <Gift className="w-5 h-5" />
+                  Get Your Free AI Plan
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <Link to="/gyms">
+                <Button variant="secondary" size="lg" className="gap-2">
+                  <MapPin className="w-5 h-5" />
+                  Explore Gyms
+                </Button>
+              </Link>
+            </Reveal>
           </div>
         </div>
       </section>
+
+      {/* Animated stats band */}
+      <StatsBand />
 
       {/* Mobile App Download Section */}
       <section className="py-16 px-6">
@@ -280,39 +292,48 @@ export default function Home() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <Card variant="bordered" className="text-center">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 text-accent font-bold text-xl">
-                1
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Get Your Free AI Plan</h3>
-              <p className="text-muted text-sm">
-                Sign up and answer a few questions about your goals and experience.
-                Our AI builds a personalized training program — completely free.
-              </p>
-            </Card>
-            <Card variant="bordered" className="text-center">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 text-accent font-bold text-xl">
-                2
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Visit a Partner Gym</h3>
-              <p className="text-muted text-sm">
-                Walk into any of our 6 partner gyms across Dhaka.
-                Buy your membership at the counter — cash or mobile banking.
-              </p>
-            </Card>
-            <Card variant="bordered" className="text-center">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 text-accent font-bold text-xl">
-                3
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Train Smarter</h3>
-              <p className="text-muted text-sm">
-                Follow your AI plan at the gym. Regenerate or update anytime — it's always free.
-                One gym membership works at all 6 locations.
-              </p>
-            </Card>
+            <Reveal>
+              <Card variant="bordered" className="text-center">
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 text-accent font-bold text-xl">
+                  1
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Get Your Free AI Plan</h3>
+                <p className="text-muted text-sm">
+                  Sign up and answer a few questions about your goals and experience.
+                  Our AI builds a personalized training program — completely free.
+                </p>
+              </Card>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <Card variant="bordered" className="text-center">
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 text-accent font-bold text-xl">
+                  2
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Visit a Partner Gym</h3>
+                <p className="text-muted text-sm">
+                  Walk into any of our 6 partner gyms across Dhaka.
+                  Buy your membership at the counter — cash or mobile banking.
+                </p>
+              </Card>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <Card variant="bordered" className="text-center">
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 text-accent font-bold text-xl">
+                  3
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Train Smarter</h3>
+                <p className="text-muted text-sm">
+                  Follow your AI plan at the gym. Regenerate or update anytime — it's always free.
+                  One gym membership works at all 6 locations.
+                </p>
+              </Card>
+            </Reveal>
           </div>
         </div>
       </section>
+
+      {/* Fitness calculator */}
+      <FitnessCalculator />
 
       {/* Partner Gyms Preview */}
       <section className="py-16 px-6">
@@ -366,6 +387,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <Testimonials />
+
       {/* Features Section */}
       <section className="py-20 px-6 bg-card/50">
         <div className="max-w-6xl mx-auto">
@@ -378,18 +402,19 @@ export default function Home() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature) => (
-              <Card
-                key={feature.title}
-                variant="bordered"
-                className="group hover:border-accent/50 transition-colors"
-              >
-                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-accent" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                <p className="text-muted text-sm">{feature.description}</p>
-              </Card>
+            {features.map((feature, i) => (
+              <Reveal key={feature.title} delay={(i % 3) * 0.08}>
+                <Card
+                  variant="bordered"
+                  className="group hover:border-accent/50 transition-colors h-full"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                    <feature.icon className="w-6 h-6 text-accent" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
+                  <p className="text-muted text-sm">{feature.description}</p>
+                </Card>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -461,6 +486,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      <Faq />
 
       {/* CTA Section */}
       <section className="py-20 px-6 bg-card/50">

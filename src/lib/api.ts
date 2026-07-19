@@ -110,7 +110,4 @@ export const api = {
     }>(`/plan/${id}?userId=${userId}`);
   },
 
-  hasAnyPlans: () => {
-    return get<{ exists: boolean }>("/plan/exists");
-  },
 };

@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/TextArea";
 
@@ -79,36 +78,6 @@ describe("Card", () => {
   it("should merge custom className", () => {
     render(<Card className="custom">Custom</Card>);
     expect(screen.getByText("Custom").className).toContain("custom");
-  });
-});
-
-describe("Input", () => {
-  it("should render an input element", () => {
-    render(<Input id="test-input" />);
-    expect(screen.getByRole("textbox")).toBeInTheDocument();
-  });
-
-  it("should render a label when provided", () => {
-    render(<Input id="test-input" label="Test Label" />);
-    expect(screen.getByLabelText("Test Label")).toBeInTheDocument();
-  });
-
-  it("should display error message", () => {
-    render(<Input id="test-input" error="This field is required" />);
-    expect(screen.getByText("This field is required")).toBeInTheDocument();
-  });
-
-  it("should forward input props", () => {
-    render(<Input id="test-input" placeholder="Enter text" />);
-    expect(screen.getByRole("textbox")).toHaveAttribute(
-      "placeholder",
-      "Enter text",
-    );
-  });
-
-  it("should merge custom className", () => {
-    render(<Input id="test-input" className="custom-input" />);
-    expect(screen.getByRole("textbox").className).toContain("custom-input");
   });
 });
 

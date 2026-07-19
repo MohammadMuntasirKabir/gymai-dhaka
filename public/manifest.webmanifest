@@ -1,0 +1,19 @@
+{
+  "name": "GymAI Dhaka",
+  "short_name": "GymAI",
+  "description": "Free AI-generated personal training plans and 6 partner gyms across Dhaka, Bangladesh.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "lang": "en-BD",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

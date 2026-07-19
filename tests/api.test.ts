@@ -163,25 +163,6 @@ describe("api", () => {
     });
   });
 
-  describe("hasAnyPlans", () => {
-    it("should GET /api/plan/exists", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ exists: true }),
-      });
-
-      const result = await api.hasAnyPlans();
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        "/api/plan/exists",
-        expect.objectContaining({
-          credentials: "include",
-        }),
-      );
-      expect(result).toEqual({ exists: true });
-    });
-  });
-
   describe("error handling", () => {
     it("should handle non-JSON error responses gracefully", async () => {
       mockFetch.mockResolvedValueOnce({
@@ -191,13 +172,17 @@ describe("api", () => {
         },
       });
 
-      await expect(api.hasAnyPlans()).rejects.toThrow("Request failed");
+      await expect(api.getCurrentPlan("user-1")).rejects.toThrow(
+        "Request failed",
+      );
     });
 
     it("should handle network errors", async () => {
       mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
-      await expect(api.hasAnyPlans()).rejects.toThrow("Network error");
+      await expect(api.getCurrentPlan("user-1")).rejects.toThrow(
+        "Network error",
+      );
     });
   });
 });

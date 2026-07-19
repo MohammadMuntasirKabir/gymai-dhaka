@@ -26,10 +26,7 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes("node_modules")) return undefined;
           if (id.includes("neon") || id.includes("@neondatabase")) return "neon-auth";
-          if (id.includes("better-auth") || id.includes("@better-auth")) return "better-auth";
-          if (id.includes("@tanstack") || id.includes("react-query")) return "react-query";
           if (id.includes("lucide-react")) return "icons";
-          if (id.includes("/pg/") || id.includes("pg-format") || id.includes("pg-int8")) return "pg";
           if (
             id.includes("/react/") ||
             id.includes("/react-dom/") ||
