@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
-import { prisma } from "../lib/prisma";
-import { generateTrainingPlan } from "../lib/ai";
+import { prisma } from "../lib/prisma.js";
+import { generateTrainingPlan } from "../lib/ai.js";
 
 export const planRouter = Router();
 
@@ -105,7 +105,7 @@ planRouter.get("/history", async (req: Request, res: Response) => {
     });
 
     res.json({
-      plans: plans.map((p) => ({
+      plans: plans.map((p: { id: string; version: number; created_at: Date }) => ({
         id: p.id,
         version: p.version,
         createdAt: p.created_at,

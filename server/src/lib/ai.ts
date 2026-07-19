@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { TrainingPlan, UserProfile } from "../types";
+import { TrainingPlan, UserProfile } from "../types.js";
 
 interface AiDaySchedule {
   day: string;
