@@ -3,8 +3,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { profileRouter } from "./routes/profile.js";
-import { planRouter } from "./routes/plan.js";
+import { profileRouter } from "./routes/profile";
+import { planRouter } from "./routes/plan";
 
 export const app = express();
 // Don't advertise the framework in response headers.
