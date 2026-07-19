@@ -79,7 +79,7 @@ export async function generateTrainingPlan(
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const completion = await openai.chat.completions.create({
-        model: "qwen/qwen3-32b:free", // TEMP: verify pipeline; revert to google/gemma-4-31b-it:free
+        model: "meta-llama/llama-3.1-8b-instruct:free", // TEMP: verify pipeline; revert to google/gemma-4-31b-it:free
         messages: [
           {
             role: "system",
